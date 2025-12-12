@@ -274,50 +274,57 @@ function updateSummary() {
           if(descEl) descEl.textContent = "口袋裡的點數總額";
       } else {
           // 當篩選特定類別時，總資產卡片顯示該類別所有時間的結餘
-          if(titleEl) titleEl.textContent = `${categoryName} 總結餘`; 
+          if(titleEl) titleIlel.textContent = `${categoryName} 總結餘`; 
           if(descEl) descEl.textContent = `所有時間的 ${categoryName} 收支總和`;
       }
   }
 
-  // --- 6. 預算 UI 邏輯 (預算與總收入掛鉤) ---
+  // --- 6. 預算 UI 邏輯 (預算追蹤當月總結餘/淨流入) ---
   
-  // 【關鍵修改點】：計算當月的總收入 (所有類別)
-  const budgetIncome = transactions
-    .filter(isCurrentMonth) // 篩選當月
-    .filter((txn) => txn.type === "income") // *** 篩選收入 (從 expense 改為 income) ***
+  // 計算當月所有類別的總收入和總支出
+  const totalMonthIncome = transactions
+    .filter(isCurrentMonth)
+    .filter((txn) => txn.type === "income")
     .reduce((sum, txn) => sum + Number(txn.amount), 0);
     
-  // 由於現在是跟收入掛鉤，所以 remaining 和 progress bar 的邏輯需要調整
+  const totalMonthExpense = transactions
+    .filter(isCurrentMonth)
+    .filter((txn) => txn.type === "expense")
+    .reduce((sum, txn) => sum + Number(txn.amount), 0);
+    
+  // 【關鍵修改點】：計算當月淨結餘 (Net Flow)
+  const currentMonthNetFlow = totalMonthIncome - totalMonthExpense;
 
-  // 預算金額 (amount) 現在代表「期望的每月收入」
+  // 預算金額 (amount) 現在代表「期望的每月淨結餘 (例如：期望每月淨賺 $2000)」
   const budgetAmount = Number(budget.amount);
   
-  // 計算「與期望收入的差距」 (Difference from Target Income)
-  const difference = budgetIncome - budgetAmount; 
+  // 計算「與期望淨結餘的差異」 (Difference from Target Net Flow)
+  // 如果目標是 $2000，實際淨結餘 $1500，則差異為 $500 (還差 $500 達成目標)
+  const difference = budgetAmount - currentMonthNetFlow; 
   
-  // 計算達成百分比 (實際收入 / 期望收入)
+  // 計算達成百分比 (實際淨結餘 / 期望淨結餘)
   const percent =
-    budgetAmount > 0 ? Math.round((budgetIncome / budgetAmount) * 100) : 0;
+    budgetAmount !== 0 ? Math.round((currentMonthNetFlow / budgetAmount) * 100) : 0;
     
-  // 顯示「距離目標收入的差距」
-  budgetRemaining.textContent = `${difference.toLocaleString()}`; // 顯示收入與預算目標的差異
+  // 顯示「距離目標淨結餘的差異」
+  budgetRemaining.textContent = `${difference.toLocaleString()}`; 
   totalBudget.textContent = `${budgetAmount.toLocaleString()}`;
   budgetPercent.textContent = `${percent}%`;
 
-  let progressWidth = budgetAmount > 0 ? (budgetIncome / budgetAmount) * 100 : 0;
-  progressWidth = Math.max(0, progressWidth); // 收入可以超過 100%
+  // 進度條長度代表淨結餘達成率
+  let progressWidth = budgetAmount !== 0 ? (currentMonthNetFlow / budgetAmount) * 100 : 0;
+  progressWidth = Math.max(0, progressWidth); // 淨結餘可以是負數，但進度條應至少從 0 開始
   budgetProgressBar.style.width = `${progressWidth}%`;
 
-  // 預算條顏色邏輯也應反轉：達成率越高越好
+  // 進度條顏色邏輯：
   budgetProgressBar.className = "progress-bar-fill"; 
-  if (percent < 50) {
-    budgetProgressBar.classList.add("danger"); // 未達標，顯示紅色
-  } else if (percent < 100) {
-    budgetProgressBar.classList.add("warning"); // 即將達標
+  if (currentMonthNetFlow < 0) {
+      budgetProgressBar.classList.add("danger"); // 淨結餘為負，表示這個月是賠錢的
+  } else if (currentMonthNetFlow < budgetAmount) {
+      budgetProgressBar.classList.add("warning"); // 有賺錢但未達預期目標
   } else {
-    budgetProgressBar.classList.add("success"); // 超過目標
+      budgetProgressBar.classList.add("success"); // 淨結餘達到或超過目標
   }
-
 
   // 7. 渲染列表 (使用經過類別篩選的資料)
   renderTransactions(categoryFilteredTransactions);
