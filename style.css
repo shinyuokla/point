@@ -1,0 +1,645 @@
+/* ===== CSS Variables ===== */
+:root {
+  --primary-bg: #f0f6e3; /* 柔和的米綠色背景 */
+  --card-bg: #fffdf5; /* 米白卡片 */
+  --text-color: #584c42; /* 深咖啡色文字 */
+  --text-light: #8b7d70; /* 淺一點的文字 */
+  --primary-green: #5abf98; /* 主色綠 */
+  --primary-green-dark: #3a8f70;
+  --primary-blue: #55a4e8; /* 天空藍 */
+  --primary-yellow: #f9d065; /* 金黃色 */
+  --primary-red: #ff7675;
+  --border-color: #e0dacc;
+  --radius: 24px;
+  --shadow: 0 6px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Zen Maru Gothic', 'Varela Round', sans-serif;
+  background: var(--primary-bg);
+  /* 背景圖案 */
+  background-image: radial-gradient(#dcecc4 15%, transparent 16%), radial-gradient(#dcecc4 15%, transparent 16%);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  color: var(--text-color);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.app {
+  max-width: 600px; /* 手機風格 */
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 手機版減少上下邊距 */
+@media (max-width: 767px) {
+  .app {
+    padding: 12px;
+  }
+}
+
+.section {
+  flex: 1;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Landing Section ===== */
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.landing-card {
+  background: var(--card-bg);
+  padding: 40px 30px;
+  border-radius: 30px;
+  box-shadow: 0 10px 20px rgba(88, 76, 66, 0.1);
+  border: 4px solid white;
+}
+
+.app-logo {
+  font-size: 3rem;
+  background: transparent;
+  color: var(--primary-green);
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  box-shadow: none;
+}
+
+.app-logo.small {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+h1 {
+  color: var(--primary-green-dark);
+  font-size: 1.8rem;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.subtitle {
+  color: #8b7d70;
+  margin-bottom: 32px;
+  font-size: 1rem;
+}
+
+/* ===== Login Section ===== */
+#login-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  border: 4px solid white;
+  box-shadow: var(--shadow);
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.login-card h2 {
+  text-align: center;
+  margin: 10px 0 30px;
+  color: var(--primary-green-dark);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: var(--primary-green-dark);
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-color);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary-green);
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-lg {
+  font-size: 1.2rem;
+  padding: 16px 32px;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  width: auto;
+}
+
+.btn-primary {
+  background: var(--primary-green);
+  color: white;
+  box-shadow: 0 4px 0 var(--primary-green-dark);
+}
+
+.btn-primary:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--primary-green-dark);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #9ca095;
+  border: 1px solid #e0dacc;
+  box-shadow: none;
+  font-weight: 400;
+}
+
+.btn-secondary:hover {
+  background: #f5f5f5;
+  color: var(--text-color);
+}
+
+.btn-secondary:active {
+  transform: translateY(1px);
+  background: #ebebeb;
+}
+
+.error-msg {
+  color: var(--primary-red);
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* ===== Main Section ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  background: var(--card-bg);
+  padding: 12px 20px;
+  border-radius: 50px;
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  color: var(--primary-green-dark);
+  line-height: 1;
+}
+
+/* Summary Card */
+.bells-card {
+  background: linear-gradient(135deg, #fffdf5, #fff8dc);
+  padding: 24px;
+  border-radius: 28px;
+  border: 3px solid white;
+  box-shadow: 0 6px 12px rgba(249, 208, 101, 0.12);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* 手機版優化 */
+@media (max-width: 767px) {
+  .bells-card {
+    padding: 16px 16px 20px;
+    margin-bottom: 20px;
+  }
+}
+
+.bell-row {
+  margin-bottom: 24px;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bell-row .label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #8b7d70;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.bell-row .amount {
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: var(--primary-yellow);
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 #e0c060;
+  font-family: 'Varela Round', sans-serif;
+}
+
+.bell-stats {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.stat-item {
+  background: white;
+  padding: 12px 20px;
+  border-radius: 18px;
+  min-width: 120px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+}
+
+@media (max-width: 767px) {
+  .bell-stats {
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  .stat-item {
+    padding: 10px 16px;
+    min-width: 100px;
+  }
+}
+
+.stat-item .label {
+  font-size: 0.8rem;
+  display: block;
+  color: #9ca095;
+  margin-bottom: 4px;
+}
+
+.stat-item.income .amount { color: var(--primary-green); }
+.stat-item.expense .amount { color: var(--primary-red); }
+
+/* Action Grid */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 767px) {
+  .action-grid {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+}
+
+.action-card {
+  border: none;
+  padding: 28px 24px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--text-color);
+  border: 3px solid white;
+}
+
+@media (max-width: 767px) {
+  .action-card {
+    padding: 24px 20px;
+    gap: 8px;
+  }
+}
+
+.action-card.income {
+  background: #e3f6f5; /* 淡藍綠 */
+  box-shadow: 0 6px 0 #b8e0de;
+  color: var(--primary-green-dark);
+}
+
+.action-card.expense {
+  background: #fff0f0; /* 淡粉紅 */
+  box-shadow: 0 6px 0 #ffccd2;
+  color: #d65d5d;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+}
+
+.action-card:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 transparent !important;
+}
+
+.action-card .icon {
+  font-size: 2.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Transaction List */
+.list-container h3 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: #8b7d70;
+  padding-left: 12px;
+  border-left: 6px solid var(--primary-yellow);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transaction-item {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transition: transform 0.2s;
+  border: 2px solid transparent;
+}
+
+.transaction-item:hover {
+  transform: translateX(4px);
+  border-color: var(--border-color);
+}
+
+.transaction-item .left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.transaction-item .category-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px; /* 圓角矩形更現代 */
+  background: var(--primary-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  color: white;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.transaction-item .info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.transaction-item .note {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.transaction-item .meta {
+  font-size: 0.8rem;
+  color: #9ca095;
+  font-weight: 500;
+}
+
+.transaction-item .right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transaction-item .amount {
+  font-weight: 700;
+  font-size: 1.2rem;
+  font-family: 'Varela Round', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.transaction-item .amount.income { color: var(--primary-green); }
+.transaction-item .amount.expense { color: var(--primary-red); }
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-left: 8px;
+  opacity: 1; /* 手機預設顯示 */
+  transform: scale(1);
+}
+
+.edit-btn {
+  background: #e8f5e9;
+  color: var(--primary-green-dark);
+}
+
+.edit-btn:hover {
+  background: var(--primary-green);
+  color: white;
+}
+
+.delete-btn {
+  background: #ffecec;
+  color: var(--primary-red);
+}
+
+.delete-btn:hover {
+  background: var(--primary-red);
+  color: white;
+}
+
+/* 桌面版：預設隱藏，hover 才顯示 */
+@media (min-width: 768px) {
+  .edit-btn,
+  .delete-btn {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .transaction-item:hover .edit-btn,
+  .transaction-item:hover .delete-btn {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* SweetAlert Customization */
+div:where(.swal2-container) div:where(.swal2-popup) {
+  border-radius: 30px !important;
+  background: var(--card-bg) !important;
+  border: 4px solid white !important;
+  font-family: 'Zen Maru Gothic', sans-serif !important;
+}
+
+.swal-form {
+  text-align: left;
+}
+
+.swal2-input, .swal2-select {
+  width: 100% !important;
+  margin: 0 0 16px !important;
+  box-sizing: border-box !important;
+}
+
+/* ===== Budget Section ===== */
+/* Budget Main Display */
+.budget-main-display {
+  text-align: center;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 12px 20px 20px;
+  border-radius: 20px;
+}
+
+.budget-main-display:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+
+.label-lg {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #8b7d70;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.amount-hero {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  letter-spacing: 0;
+  text-shadow: 2px 2px 0 rgba(90, 191, 152, 0.2);
+  font-family: 'Varela Round', sans-serif;
+  margin-bottom: 20px;
+  line-height: 1;
+  word-break: break-all;
+}
+
+.budget-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #9ca095;
+  font-weight: 500;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 16px;
+  background-color: #e8e8e8;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-green), #81ecec);
+  border-radius: 10px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 預算狀態顏色 */
+.progress-bar-fill.warning {
+  background: linear-gradient(90deg, #fdcb6e, #ffeaa7);
+}
+
+.progress-bar-fill.danger {
+  background: linear-gradient(90deg, #ff7675, #fab1a0);
+}
+
+/* 手機版調整 */
+@media (max-width: 767px) {
+  .amount-hero {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  
+  .budget-main-display {
+    padding: 8px 16px 20px;
+  }
+}

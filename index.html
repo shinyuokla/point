@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森森點數</title>
+    <link rel="icon" type="image/png" href="./icon.png">
+    <link rel="apple-touch-icon" href="./icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* 讓總資產跟預算並排顯示的 Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* 手機版適配：螢幕太小時變回上下排 */
+        @media (max-width: 400px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 總資產卡片樣式 (繼承 budget-main-display 但去除部分屬性) */
+        .info-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e0e7df;
+            height: 100%;
+            /* 確保高度一致 */
+        }
+
+        /* 列表標頭容器 */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        /* 類別篩選選單樣式 */
+        .filter-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #f1f8e9;
+            border: 1px solid #c5e1a5;
+            color: #558b2f;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            text-align: center;
+            /* 自訂下拉箭頭 */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23558b2f%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 10px;
+            padding-right: 25px;
+        }
+
+        .filter-select:hover {
+            background-color: #dcedc8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+
+        <section id="landing-section" class="section landing-container">
+            <div class="landing-card">
+                <div class="app-logo">💰</div>
+                <h1>森森風格<br>點數助手</h1>
+                <p class="subtitle">噓...這裡不談錢，<br>只有工作上的快樂與夢想！</p>
+                <button id="go-login-btn" class="btn btn-primary btn-lg">開啟小金庫</button>
+            </div>
+        </section>
+
+        <section id="login-section" class="section hidden">
+            <div class="login-card">
+                <button id="back-to-landing" class="btn-icon back-btn">←</button>
+                <div class="app-logo small">💰</div>
+                <h2>點數登入</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">使用者名稱</label>
+                        <input type="text" id="username" name="username" required autocomplete="username"
+                            placeholder="請輸入帳號">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">通關密碼</label>
+                        <input type="password" id="password" name="password" required autocomplete="current-password"
+                            placeholder="請輸入密碼">
+                    </div>
+                    <button type="submit" class="btn btn-primary">解鎖點數金庫</button>
+                    <p id="login-error" class="error-msg"></p>
+                </form>
+            </div>
+        </section>
+
+        <section id="main-section" class="section hidden">
+            <header class="header">
+                <div class="brand">
+                    <span class="app-logo small">💰</span>
+                    <span id="welcome-msg">歡迎回來！</span>
+                </div>
+                <button id="logout-btn" class="btn btn-sm btn-secondary">登出</button>
+            </header>
+
+            <div class="bells-card">
+                <!-- <div class="summary-grid"> -->
+
+                <!-- <div class="budget-main-display info-card">
+                        <span class="label-lg">目前總資產</span>
+                        <div class="amount-hero" id="total-balance" style="color: #558b2f;">0</div>
+                        <div class="budget-meta">
+                            <span style="font-size: 0.85em; opacity: 0.7;">口袋裡的點數</span>
+                        </div>
+                    </div> -->
+
+                <div class="budget-main-display" id="budget-section">
+                    <span class="label-lg">本月點數目標</span>
+                    <div class="amount-hero" id="budget-remaining">0</div>
+
+                    <div class="progress-bar-bg">
+                        <div id="budget-progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="budget-meta">
+                        <span>目標點數: <span id="total-budget">0</span></span>
+                        <span id="budget-percent">0%</span>
+                    </div>
+                </div>
+                <!-- </div> -->
+
+                <div class="bell-stats">
+                    <div class="stat-item expense">
+                        <span class="label">總點數</span>
+                        <span id="total-balance" class="amount">0</span>
+                    </div>
+                    <div class="stat-item income">
+                        <span class="label">本月加點數</span>
+                        <span id="total-income" class="amount">0</span>
+                    </div>
+                    <div class="stat-item expense">
+                        <span class="label">本月扣點數</span>
+                        <span id="total-expense" class="amount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-grid">
+                <button id="btn-add-transaction" class="action-card income">
+                    <span class="icon">✏️</span>
+                    <span>記一筆</span>
+                </button>
+                <button id="btn-manage-category" class="action-card expense">
+                    <span class="icon">🗂️</span>
+                    <span>管理分類</span>
+                </button>
+            </div>
+
+            <div class="list-container">
+                <div class="list-header">
+                    <h3 id="transaction-list-title" style="margin: 0;">所有紀錄</h3>
+
+                    <select id="category-filter" class="filter-select">
+                        <option value="all">顯示全部</option>
+                    </select>
+                </div>
+
+                <div id="transaction-list" class="transaction-list">
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <template id="tpl-transaction-form">
+        <form id="swal-txn-form" class="swal-form">
+            <div class="form-group">
+                <label>日期</label>
+                <input type="date" id="swal-date" class="swal2-input" required>
+            </div>
+            <div class="form-group">
+                <label>收支</label>
+                <select id="swal-type" class="swal2-select">
+                    <option value="expense">支出</option>
+                    <option value="income">收入</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>類別</label>
+                <select id="swal-category" class="swal2-select">
+                </select>
+            </div>
+            <div class="form-group">
+                <label>金額</label>
+                <input type="number" id="swal-amount" class="swal2-input" placeholder="多少點？" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>備註</label>
+                <input type="text" id="swal-note" class="swal2-input" placeholder="例如：買卡片、聚餐">
+            </div>
+        </form>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
