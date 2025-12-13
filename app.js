@@ -253,7 +253,7 @@ function updateSummary() {
   // 更新列表標題
   transactionListTitle.textContent = currentFilter === 'all' 
     ? "所有點數紀錄" 
-    : `${categoryFilter.options[categoryFilter.selectedIndex].text} 紀錄`;
+    : `${categoryFilter.options[categoryFilter.selectedIndex].text} の紀錄`;
 
   // 更新左上角的總資產/結餘
   if (totalBalanceEl) {
@@ -630,14 +630,14 @@ window.editTransaction = async function (id) {
           }" required>
         </div>
         <div class="form-group">
-          <label>收支</label>
+          <label>加扣點</label>
           <select id="swal-type" class="swal2-select">
-            <option value="expense" ${
-              txn.type === "expense" ? "selected" : ""
-            }>支出</option>
             <option value="income" ${
               txn.type === "income" ? "selected" : ""
-            }>收入</option>
+            }>加點</option>
+            <option value="expense" ${
+              txn.type === "expense" ? "selected" : ""
+            }>扣點</option>
           </select>
         </div>
         <div class="form-group">
