@@ -115,7 +115,7 @@ async function loadData() {
 async function loadCategories() {
   const data = await api("/api/categories");
   categories = data.data || [];
-  renderCategoryFilter(); // 載入類別後更新篩選選單
+  renderCategoryFilter(); // 載入成員後更新篩選選單
 }
 
 async function loadTransactions() {
@@ -130,7 +130,7 @@ async function loadBudget() {
   updateSummary(); // 載入預算後更新統計介面
 }
 
-// ===== 渲染類別篩選器 =====
+// ===== 渲染成員篩選器 =====
 function renderCategoryFilter() {
   const options = categories
     .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
@@ -138,7 +138,7 @@ function renderCategoryFilter() {
   
   // 保存當前選擇
   const currentVal = categoryFilter.value;
-  categoryFilter.innerHTML = `<option value="all">顯示全部</option>` + options;
+  categoryFilter.innerHTML = `<option value="all">顯示全部紀錄</option>` + options;
   
   if(currentFilter && currentFilter !== 'all'){
       categoryFilter.value = currentFilter;
@@ -212,13 +212,13 @@ function updateSummary() {
     );
   };
 
-  // --- 2. 執行類別篩選 (影響所有數字與列表) ---
+  // --- 2. 執行成員篩選 (影響所有數字與列表) ---
   let categoryFilteredTransactions = transactions;
   if (currentFilter !== "all") {
     categoryFilteredTransactions = transactions.filter(txn => txn.category_id === currentFilter);
   }
 
-  // --- 3. 計算左上角總資產/結餘 (所有時間 + 類別篩選) ---
+  // --- 3. 計算左上角總資產/結餘 (所有時間 + 成員篩選) ---
   const balanceIncome = categoryFilteredTransactions
     .filter((txn) => txn.type === "income")
     .reduce((sum, txn) => sum + Number(txn.amount), 0);
@@ -230,9 +230,9 @@ function updateSummary() {
   const balance = balanceIncome - balanceExpense;
 
 
-  // --- 4. 計算當月收入與支出 (當月 + 類別篩選) ---
+  // --- 4. 計算當月收入與支出 (當月 + 成員篩選) ---
   
-  // 篩選出「當月」且「符合類別」的交易
+  // 篩選出「當月」且「符合成員」的交易
   const currentMonthDisplayTransactions = categoryFilteredTransactions.filter(isCurrentMonth);
 
   const currentMonthIncome = currentMonthDisplayTransactions
@@ -273,7 +273,7 @@ function updateSummary() {
           if(titleEl) titleEl.textContent = "目前總資產";
           if(descEl) descEl.textContent = "口袋裡的點數總額";
       } else {
-          // 當篩選特定類別時，總資產卡片顯示該類別所有時間的結餘
+          // 當篩選特定成員時，總資產卡片顯示該成員所有時間的結餘
           if(titleEl) titleIlel.textContent = `${categoryName} 總結餘`; 
           if(descEl) descEl.textContent = `所有時間的 ${categoryName} 收支總和`;
       }
@@ -281,7 +281,7 @@ function updateSummary() {
 
   // --- 6. 預算 UI 邏輯 (預算追蹤當月總結餘/淨流入) ---
   
-  // 計算當月所有類別的總收入和總支出
+  // 計算當月所有成員的總收入和總支出
   const totalMonthIncome = transactions
     .filter(isCurrentMonth)
     .filter((txn) => txn.type === "income")
@@ -326,7 +326,7 @@ function updateSummary() {
       budgetProgressBar.classList.add("success"); // 淨結餘達到或超過目標
   }
 
-  // 7. 渲染列表 (使用經過類別篩選的資料)
+  // 7. 渲染列表 (使用經過成員篩選的資料)
   renderTransactions(categoryFilteredTransactions);
 }
 
@@ -386,10 +386,10 @@ async function openAddTransactionModal() {
       <form id="swal-txn-form" class="swal-form">
         <div class="form-group">
           <label>項目名稱</label>
-          <input type="text" id="swal-note" class="swal2-input" placeholder="例如：午餐、搭公車、買卡片" required autofocus>
+          <input type="text" id="swal-note" class="swal2-input" placeholder="例如：幫忙做家事、得獎" required autofocus>
         </div>
         <div class="form-group">
-          <label>類別</label>
+          <label>成員</label>
           <select id="swal-category" class="swal2-select">
             ${categoryOptions}
           </select>
@@ -399,10 +399,10 @@ async function openAddTransactionModal() {
           <input type="number" id="swal-amount" class="swal2-input" placeholder="多少點？" min="1" required>
         </div>
         <div class="form-group">
-          <label>收支</label>
+          <label>加扣點</label>
           <select id="swal-type" class="swal2-select">
-            <option value="expense">扣點</option>
             <option value="income">加點</option>
+            <option value="expense">扣點</option>
           </select>
         </div>
         <div class="form-group">
@@ -475,10 +475,10 @@ async function openManageCategoryModal() {
     .join("");
 
   const { value: newCat } = await Swal.fire({
-    title: "管理類別",
+    title: "管理成員",
     html: `
       <div style="text-align:left; margin-bottom:16px;">
-        <label style="font-weight:bold;">新增類別</label>
+        <label style="font-weight:bold;">新增成員</label>
         <div style="display:flex; gap:8px; margin-top:8px;">
           <input id="swal-cat-name" class="swal2-input" placeholder="名稱" style="margin:0 !important;">
           <input id="swal-cat-color" type="color" value="#5abf98" style="height:46px; width:60px; padding:0; border:none; background:none;">
@@ -486,12 +486,12 @@ async function openManageCategoryModal() {
       </div>
       <hr style="border:0; border-top:1px dashed #ccc; margin:16px 0;">
       <div style="text-align:left; max-height:200px; overflow-y:auto;">
-        <label style="font-weight:bold; margin-bottom:8px; display:block;">現有類別 (點擊可編輯)</label>
+        <label style="font-weight:bold; margin-bottom:8px; display:block;">現有成員 (點擊可編輯)</label>
         ${categoryListHtml}
       </div>
     `,
     showCancelButton: true,
-    confirmButtonText: "新增類別",
+    confirmButtonText: "新增成員",
     cancelButtonText: "關閉",
     confirmButtonColor: "#5abf98",
     preConfirm: () => {
@@ -505,7 +505,7 @@ async function openManageCategoryModal() {
   if (newCat) {
     Swal.fire({
       title: "新增中...",
-      text: "正在建立類別",
+      text: "正在建立成員",
       allowOutsideClick: false,
       allowEscapeKey: false,
       didOpen: () => {
@@ -519,7 +519,7 @@ async function openManageCategoryModal() {
         body: JSON.stringify(newCat),
       });
       await loadCategories();
-      Swal.fire("成功", "類別已新增！", "success").then(() =>
+      Swal.fire("成功", "成員已新增！", "success").then(() =>
         openManageCategoryModal()
       );
     } catch (error) {
@@ -530,11 +530,11 @@ async function openManageCategoryModal() {
 
 window.editCategory = async function (id, currentName, currentColor) {
   const { value: updatedCat } = await Swal.fire({
-    title: "編輯類別",
+    title: "編輯成員",
     html: `
       <div style="text-align:left;">
         <div style="margin-bottom:16px;">
-          <label>類別名稱</label>
+          <label>成員名稱</label>
           <input id="edit-cat-name" class="swal2-input" value="${currentName}" placeholder="名稱">
         </div>
         <div>
@@ -572,7 +572,7 @@ window.editCategory = async function (id, currentName, currentColor) {
         body: JSON.stringify(updatedCat),
       });
       await loadCategories();
-      Swal.fire("成功", "類別已更新！", "success").then(() =>
+      Swal.fire("成功", "成員已更新！", "success").then(() =>
         openManageCategoryModal()
       );
     } catch (error) {
@@ -618,7 +618,7 @@ window.editTransaction = async function (id) {
           }" required autofocus>
         </div>
         <div class="form-group">
-          <label>類別</label>
+          <label>成員</label>
           <select id="swal-category" class="swal2-select">
             ${categoryOptions}
           </select>
@@ -718,8 +718,8 @@ window.deleteTransaction = async function (id) {
 
 window.deleteCategory = async function (id) {
   const result = await Swal.fire({
-    title: "刪除類別？",
-    text: "該類別無法復原喔！",
+    title: "刪除成員？",
+    text: "該成員無法復原喔！",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#ff7675",
@@ -731,7 +731,7 @@ window.deleteCategory = async function (id) {
     try {
       await api(`/api/categories/${id}`, { method: "DELETE" });
       await loadCategories();
-      Swal.fire("已刪除！", "類別已移除。", "success");
+      Swal.fire("已刪除！", "成員已移除。", "success");
     } catch (error) {
       Swal.fire("失敗", error.message, "error");
     }
